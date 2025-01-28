@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #chat { margin-bottom: 20px; }
+    #messages { height: 300px; overflow-y: scroll; border: 1px solid #ddd; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Simple Chat App</h1>
+  <div id="login">
+    <input type="text" id="username" placeholder="Enter username" />
+    <button onclick="login()">Login</button>
+  </div>
+  <div id="chat" style="display:none;">
+    <div id="messages"></div>
+    <input type="text" id="message" placeholder="Type your message" />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    let currentUser = '';
+    const apiUrl = 'http://localhost:3000';
+
+    function login() {
+      const username = document.getElementById('username').value;
+      fetch(`${apiUrl}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      }).then(res => res.json()).then(() => {
+        currentUser = username;
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('chat').style.display = 'block';
+        fetchMessages();
+      });
+    }
+
+    function sendMessage() {
+      const message = document.getElementById('message').value;
+      fetch(`${apiUrl}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: currentUser, message })
+      }).then(() => {
+        document.getElementById('message').value = '';
+        fetchMessages();
+      });
+    }
+
+    function fetchMessages() {
+      fetch(`${apiUrl}/messages`).then(res => res.json()).then(messages => {
+        const messageBox = document.getElementById('messages');
+        messageBox.innerHTML = messages.map(msg => `<p><strong>${msg.username}:</strong> ${msg.message}</p>`).join('');
+        messageBox.scrollTop = messageBox.scrollHeight;
+      });
+    }
+
+    setInterval(fetchMessages, 2000);
+  </script>
+</body>
+</html>
