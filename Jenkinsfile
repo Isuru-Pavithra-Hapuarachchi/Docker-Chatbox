@@ -4,6 +4,9 @@ pipeline {
         DOCKER_HUB_USERNAME = 'isurupavithra'
         DOCKER_HUB_TOKEN = credentials('docker') // Store PAT in Jenkins credentials
     }
+     triggers {
+        githubPush()  // Auto-trigger pipeline on Git push
+    }
 
     stages {
         stage('Clone Repository') {
