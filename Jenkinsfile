@@ -30,7 +30,7 @@ pipeline {
         stage('Deploy to Cloud Server') {
             steps {
                 sh '''
-                cd /home/isu/Docker-Chatbox
+                cd /home/isu/test
                 docker-compose pull
                 docker-compose up -d
         '''
